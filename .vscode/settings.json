@@ -1,0 +1,15 @@
+{
+	"files.exclude": {
+		"**/node_modules": true,
+		"vite*": true,
+		".eslint*": true,
+		".prettier*": true,
+		"package*": true,
+		".git*": true,
+		".npm*": true,
+		"svelte*": true,
+		"README.md": true,
+		"static": true,
+		"src/lib": true
+	}
+}
