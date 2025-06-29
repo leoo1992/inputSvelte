@@ -5,11 +5,15 @@
 		".eslint*": true,
 		".prettier*": true,
 		"package*": true,
-		".git*": true,
+		/* ".git*": true, */
 		".npm*": true,
 		"svelte*": true,
 		"README.md": true,
 		"static": true,
-		"src/lib": true
+		"src/lib": true,
+		".svelte-kit": true,
+		"src/hooks*": true,
+		".env": true,
+		"src/app.html": true
 	}
 }
