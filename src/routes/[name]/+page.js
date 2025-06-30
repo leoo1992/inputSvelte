@@ -1,30 +1,60 @@
+import { redirect } from '@sveltejs/kit';
 export async function load({ params, fetch }) {
-	const name = params.name?.trim().replace(/\s+/g, ' ');
-	const cleanName = name
-		.normalize('NFD')
-		.replace(/[\u0300-\u036f]/g, '')
-		.toLowerCase();
-	const baseUrl = import.meta.env.VITE_API_URL;
-	const url = `${baseUrl}/?name=${encodeURIComponent(cleanName)}`;
+	// pausar api
+	if (params.name) {
+		return {
+			name: params.name,
+			api: {
+				name: params.name,
+				age: 1
+			}
+			/* error: 'API pausada para manutenção' */
+		};
+	}
+
+	const name = params.name;
 
 	if (!name) {
-		return { data: name, error: 'Nome inválido' };
+		return {
+			name,
+			error: 'Nome inválido'
+		};
 	}
 
-	if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) {
-		return { data: name, error: 'Use apenas letras e espaços.' };
-	}
+	const baseUrl = import.meta.env.VITE_API_URL;
+	const url = `${baseUrl}/?name=${encodeURIComponent(name)}`;
 
 	try {
 		const res = await fetch(url);
-		if (!res.ok) {
-			throw new Error(`API retornou status ${res.status}`);
+
+		if (!res.ok && res.status === 429) {
+			return {
+				name,
+				error: 'Limite de busca excedido. Tente novamente amanhã.'
+			};
 		}
 
-		const apiData = (await res.json()) || {};
+		if (!res.ok) {
+			return {
+				name,
+				error: `API retornou status ${res.status}`
+			};
+		}
 
-		if (!apiData.name || apiData.age === null || apiData.age === undefined) {
-			return { data: null, error: 'Resposta da API incompleta' };
+		const apiData = await res.json();
+
+		if (apiData.count === 0 || apiData.age == null) {
+			return {
+				name,
+				error: 'Nome não encontrado na base de dados.'
+			};
+		}
+
+		if (!apiData.name || !apiData.age) {
+			return {
+				name,
+				error: 'Resposta da API incompleta'
+			};
 		}
 
 		return {
@@ -36,6 +66,6 @@ export async function load({ params, fetch }) {
 		};
 	} catch (err) {
 		console.error('Erro ao buscar dados da API:', err);
-		return { data: null, error: 'Erro de conexão com a API' };
+		throw redirect(302, '/?error=' + encodeURIComponent('Erro de conexão com a API'));
 	}
 }

@@ -1,8 +1,18 @@
-.DS_Store
 node_modules
-/build
+.vscode
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
 /.svelte-kit
-/package
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-.vscode
