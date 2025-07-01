@@ -1,18 +1,36 @@
 <script>
+	import { onMount } from 'svelte';
+	import { derived } from 'svelte/store';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import Input from '../components/Input.svelte';
 	import ApiError from '../components/ApiError.svelte';
 	import Loading from '../components/Loading.svelte';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { derived } from 'svelte/store';
 
 	const errorURL = derived(page, ($page) => $page.url.searchParams.get('error') || '');
 
 	let nome = '';
 	let carregando = false;
 	let timeout;
+	let fullscreenActive = false;
+
+	async function fullscreen() {
+		const el = document.documentElement;
+		if (!document.fullscreenElement && el.requestFullscreen) {
+			try {
+				await el.requestFullscreen();
+				fullscreenActive = true;
+			} catch (err) {
+				console.warn('Erro ao entrar em tela cheia:', err);
+			}
+		}
+	}
 
 	function handleInput(event) {
+		if (!fullscreenActive) {
+			fullscreen();
+		}
+
 		clearTimeout(timeout);
 		const nomeDigitado = event.detail?.trim();
 
