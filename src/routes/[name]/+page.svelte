@@ -12,25 +12,11 @@
 	let carregando = false;
 	let mensagem = 'Carregando...';
 	let rotaAtual = '';
-	let controleCursorEFoco = 0;
 	let inputRef;
-
-	function refocarInput() {
-		if (!carregando) {
-			setTimeout(() => {
-				inputRef?.focusInput();
-				controleCursorEFoco += 1;
-			}, 0);
-		}
-	}
 
 	const handleInput = LocigaInput(
 		(estado) => {
 			carregando = estado;
-
-			if (!carregando) {
-				refocarInput();
-			}
 		},
 		(texto) => (mensagem = texto),
 		(novoNome) => {
@@ -43,21 +29,17 @@
 			rotaAtual = data.name;
 			nome = data.name;
 		}
-
 		idade = data?.api?.age ?? null;
 		error = data?.error ?? null;
-
-		if (!carregando) {
-			refocarInput();
-		}
 	}
 </script>
 
-<section>
-	<div class="card">
-		<div class="title">Descubra a idade pelo nome</div>
+<main>
+	<section class="container">
+		<h1 class="title">🕵️‍♂️ Qual sua idade estimada?</h1>
+		<p class="subtitle">Digite seu nome para ver</p>
 
-		<Input bind:this={inputRef} bind:value={nome} on:input={handleInput} {controleCursorEFoco} />
+		<Input bind:this={inputRef} bind:value={nome} on:input={handleInput} />
 
 		{#if carregando}
 			<Loading msg={mensagem} />
@@ -66,54 +48,59 @@
 		{:else if nome}
 			<ApiResult name={nome} age={idade} />
 		{/if}
-	</div>
-</section>
+	</section>
+</main>
 
 <style>
-	section {
+	main {
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		min-height: 100vh;
-		width: 100%;
-		padding: 2rem;
-		background: linear-gradient(135deg, #e0f7fa, #e1bee7);
-		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		padding: 1rem;
+		box-sizing: border-box;
 	}
 
-	.card {
-		background-color: white;
-		border-radius: 1rem;
-		padding: 2rem;
-		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+	.container {
 		width: 100%;
-		max-width: 480px;
+		max-width: 520px;
+		background-color: #ffffff;
+		border-radius: 18px;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+		padding: 2rem;
+		box-sizing: border-box;
 		text-align: center;
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease;
-	}
-
-	.card:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+		transition: all 0.3s ease;
 	}
 
 	.title {
-		font-size: 1.8rem;
+		font-size: clamp(1.5rem, 2.5vw, 2rem);
 		font-weight: 700;
-		color: #333;
-		margin-bottom: 1.5rem;
+		color: #4a148c;
+		margin-bottom: 0.75rem;
+		text-wrap: balance;
+	}
+
+	.subtitle {
+		font-size: clamp(1rem, 2vw, 1.1rem);
+		color: #555;
+		margin-bottom: 1.75rem;
+		line-height: 1.5;
+		text-wrap: pretty;
+		font-weight: 600;
 	}
 
 	@media (max-width: 480px) {
-		.card {
-			padding: 1.5rem;
+		.container {
+			padding: 1.25rem 1rem;
 		}
 
 		.title {
-			font-size: 1.5rem;
+			font-size: 1rem;
+		}
+
+		.subtitle {
+			font-size: 0.9rem;
 		}
 	}
 </style>

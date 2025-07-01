@@ -1,8 +1,7 @@
 <script>
-	import { onMount, createEventDispatcher, tick } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	export let value = '';
-	export let controleCursorEFoco = 0;
 	const dispatch = createEventDispatcher();
 	let inputEl;
 
@@ -20,21 +19,10 @@
 		value = event.target.value;
 		dispatch('input', value);
 	}
-
-	onMount(async () => {
-		await tick();
-		focusInput();
-	});
-
-	$: if (controleCursorEFoco > 0) {
-		tick().then(() => {
-			focusInput();
-		});
-	}
 </script>
 
 <div class="input-group">
-	<label for="nome" id="input-label">Digite um nome:</label>
+	<label for="nome" id="input-label">Digite seu nome</label>
 	<input
 		bind:this={inputEl}
 		bind:value
@@ -57,31 +45,44 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		max-width: 100%;
-		margin-bottom: 1.5rem;
+		max-width: 480px;
+		margin: 1.5rem auto;
 	}
 
 	label {
 		font-weight: 600;
-		margin-bottom: 0.5rem;
-		font-size: 1rem;
-		color: #444;
+		margin-bottom: 0.8rem;
+		font-size: 0.9rem;
+		color: #4a148c;
+		font-weight: 700;
 		text-align: left;
 	}
 
 	.input-field {
 		width: 100%;
-		padding: 0.85rem 1rem;
+		min-width: 220px;
+		padding: 1rem;
 		border: 2px solid #ccc;
-		border-radius: 10px;
-		font-size: 1rem;
+		border-radius: 12px;
+		font-size: 0.9rem;
 		background-color: #fff;
 		transition:
 			border-color 0.2s ease,
 			box-shadow 0.2s ease;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	}
 
 	.input-field:focus {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+		border-color: #6200ea;
+		box-shadow: 0 0 0 3px rgba(98, 0, 234, 0.2);
+		outline: none;
+	}
+
+	.input-field:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 		border-color: #6200ea;
 		box-shadow: 0 0 0 3px rgba(98, 0, 234, 0.2);
 		outline: none;
@@ -89,7 +90,16 @@
 
 	@media (max-width: 480px) {
 		.input-group {
-			width: 100%;
+			max-width: 100%;
+		}
+
+		.input-field {
+			font-size: 0.95rem;
+			padding: 0.85rem;
+		}
+
+		label {
+			font-size: 0.9rem;
 		}
 	}
 </style>

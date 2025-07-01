@@ -1,17 +1,5 @@
 import { redirect } from '@sveltejs/kit';
 export async function load({ params, fetch }) {
-	// pausar api
-	if (params.name) {
-		return {
-			name: params.name,
-			api: {
-				name: params.name,
-				age: 1
-			}
-			/* error: 'API pausada para manutenção' */
-		};
-	}
-
 	const name = params.name;
 
 	if (!name) {

@@ -2,7 +2,7 @@ import { page } from '$app/stores';
 import { get } from 'svelte/store';
 import { goto } from '$app/navigation';
 
-const mensagens = ['Carregando...', 'Obtendo dados...', 'Calculando...'];
+const mensagens = ['Carregando', 'Preparando', 'Calculando'];
 let intervaloId;
 let debounceId;
 
@@ -25,6 +25,17 @@ export function LocigaInput(setLoading, setMsgLoading, setNome) {
 	return function handleInput(event) {
 		clearTimeout(debounceId);
 		const nome = event.detail.normalize('NFD');
+
+		setNome(nome);
+
+		if (nome === '') {
+			goto('/', {
+				replaceState: true,
+				keepfocus: true,
+				noscroll: true
+			});
+			return;
+		}
 
 		debounceId = setTimeout(async () => {
 			const nomeAtual = get(page).params.name;

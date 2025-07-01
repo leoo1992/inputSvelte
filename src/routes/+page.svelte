@@ -1,103 +1,101 @@
 <script>
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import { derived } from 'svelte/store';
 	import Input from '../components/Input.svelte';
 	import ApiError from '../components/ApiError.svelte';
 	import Loading from '../components/Loading.svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { derived } from 'svelte/store';
 
 	const errorURL = derived(page, ($page) => $page.url.searchParams.get('error') || '');
+
 	let nome = '';
 	let carregando = false;
-	let mensagem = 'Carregando...';
 	let timeout;
-	let montado = false;
 
-	onMount(() => {
-		montado = true;
-	});
-
-	async function handleInput(event) {
+	function handleInput(event) {
 		clearTimeout(timeout);
-		const value = event.detail;
+		const nomeDigitado = event.detail?.trim();
+
+		if (!nomeDigitado) return;
 
 		timeout = setTimeout(async () => {
-			if (value && montado) {
-				carregando = true;
-				mensagem = 'Carregando...';
-
-				await goto(`/${encodeURIComponent(value)}`, {
-					replaceState: true,
-					keepfocus: true,
-					noscroll: true
-				});
-
+			carregando = true;
+			try {
+				await goto(`/${encodeURIComponent(nomeDigitado)}`);
+			} finally {
 				carregando = false;
 			}
-		}, 800);
+		}, 700);
 	}
 </script>
 
-<section>
-	<div class="card">
-		<div class="title">Descubra a idade pelo nome</div>
+<main>
+	<section class="container">
+		<h1 class="title">🕵️‍♂️ Qual sua idade estimada?</h1>
+		<p class="subtitle">Digite seu nome para ver</p>
+
 		<Input bind:value={nome} on:input={handleInput} />
 
 		{#if carregando}
-			<Loading msg={mensagem} />
+			<Loading msg="Consultando estimativa de idade..." />
 		{/if}
+
 		{#if $errorURL}
 			<ApiError message={$errorURL} />
 		{/if}
-	</div>
-</section>
+	</section>
+</main>
 
 <style>
-	section {
+	main {
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		min-height: 100vh;
-		width: 100%;
-		padding: 2rem;
-		background: linear-gradient(135deg, #e0f7fa, #e1bee7);
-		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		padding: 1rem;
+		box-sizing: border-box;
 	}
 
-	.card {
-		background-color: white;
-		border-radius: 1rem;
-		padding: 2rem;
-		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+	.container {
 		width: 100%;
-		max-width: 480px;
+		max-width: 520px;
+		background-color: #ffffff;
+		border-radius: 18px;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+		padding: 2rem;
+		box-sizing: border-box;
 		text-align: center;
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease;
-	}
-
-	.card:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+		transition: all 0.3s ease;
 	}
 
 	.title {
-		font-size: 1.8rem;
+		font-size: clamp(1.5rem, 2.5vw, 2rem);
 		font-weight: 700;
-		color: #333;
-		margin-bottom: 1.5rem;
+		color: #4a148c;
+		margin-bottom: 0.75rem;
+		text-wrap: balance;
+	}
+
+	.subtitle {
+		font-size: clamp(1rem, 2vw, 1.1rem);
+		color: #555;
+		margin-bottom: 1.75rem;
+		line-height: 1.5;
+		text-wrap: pretty;
+		font-weight: 600;
 	}
 
 	@media (max-width: 480px) {
-		.card {
-			padding: 1.5rem;
+		.container {
+			padding: 1.25rem 1rem;
 		}
 
 		.title {
-			font-size: 1.5rem;
+			font-size: 1rem;
+		}
+
+		.subtitle {
+			font-size: 0.9rem;
 		}
 	}
 </style>
