@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { derived } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
