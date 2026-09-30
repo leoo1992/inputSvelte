@@ -1,18 +1,18 @@
-node_modules
-.vscode
-
-# Output
-.output
-.vercel
-.netlify
-.wrangler
-/.svelte-kit
-/build
-
-# OS
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+dist/
+build/
+out/
+coverage/
+target/
+.venv/
+venv/
+__pycache__/
+quality-dist/
+.idea/
+.vscode/
 .DS_Store
-Thumbs.db
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+*.log
